@@ -1,8 +1,10 @@
 <?php
 function Submitter($status_id) {
 	$row = getStatus($status_id);
-    $row['account'] = 'fjnuvj1';
-    $row['password'] = 'fjnuvj113';
+    $acc_rand = getAccount($row['origin_oj']);
+    var_dump($acc_rand);
+    $row['account'] = $acc_rand['account'];
+    $row['password'] = $acc_rand['password'];
     switch ($row['origin_oj']) {
     	case 'HDU':
     		$run_id = Submitter_HDU($row);
@@ -35,7 +37,7 @@ function Submitter($status_id) {
 function Submitter_HDU($post){	
 	global $OJ;
 	$OJ_URL = $OJ['HDU'];
-	$cookie = SCRIPT_ROOT.'HDU_cookie.tmp';
+	$cookie = SCRIPT_ROOT.'HDU_'.$post['account'].'.tmp';
 	//Check if not Login, then login
 	$data = getContent($OJ_URL, $cookie);
 	if(!strstr($data, 'href="/userloginex.php?action=logout"')) {
@@ -63,7 +65,7 @@ function Submitter_HDU($post){
 function Submitter_POJ($post){
 	global $OJ;
 	$OJ_URL = $OJ['POJ'];
-	$cookie = SCRIPT_ROOT.'POJ_cookie.tmp';
+	$cookie = SCRIPT_ROOT.'POJ_'.$post['account'].'.tmp';
 	//Check if not Login, then login
 	$data = getContent($OJ_URL, $cookie);
 	if(!strstr($data, '>Log Out</a>')) {
@@ -93,7 +95,7 @@ function Submitter_POJ($post){
 function Submitter_FZU($post){
 	global $OJ;
 	$OJ_URL = $OJ['FZU'];
-	$cookie = SCRIPT_ROOT.'FZU_cookie.tmp';
+	$cookie = SCRIPT_ROOT.'FZU_'.$post['account'].'.tmp';
 	//Check if not Login, then login
 	$data = getContent($OJ_URL, $cookie);
 	if(!strstr($data, '>Logout</a>')) {
@@ -120,7 +122,7 @@ function Submitter_FZU($post){
 function Submitter_HUST($post){
 	global $OJ;
 	$OJ_URL = $OJ['HUST'];
-	$cookie = SCRIPT_ROOT.'HUST_cookie.tmp';
+	$cookie = SCRIPT_ROOT.'HUST_'.$post['account'].'.tmp';
 	//Check if not Login, then login
 	$data = getContent($OJ_URL, $cookie);
 	if(!strstr($data, '/logout')) {
@@ -148,7 +150,7 @@ function Submitter_HUST($post){
 function Submitter_FJNU($post){
 	global $OJ;
 	$OJ_URL = $OJ['FJNU'];
-	$cookie = SCRIPT_ROOT.'FJNU_cookie.tmp';
+	$cookie = SCRIPT_ROOT.'FJNU_'.$post['account'].'.tmp';
 	//Check if not Login, then login
 	$data = getContent($OJ_URL, $cookie);
 	//if(strstr($data, 'Please Login')) {

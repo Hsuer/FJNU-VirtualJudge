@@ -1,7 +1,6 @@
 <?php
 function Querier($row) {
 	$created_at = strtotime($row['created_at']);
-	//Query
 	while(true) {
 		switch ($row['origin_oj']) {
 			case 'HDU':
@@ -60,7 +59,7 @@ function Querier_POJ($row) {
 	global $OJ;
 	$run_id = $row['run_id'];
 	$OJ_URL = $OJ['POJ'];
-	$cookie = SCRIPT_ROOT.'POJ_cookie.tmp';
+	$cookie = SCRIPT_ROOT.'POJ_'.$row['account'].'.tmp';
     GetContent($url, $cookie);
 	$url = $OJ_URL.'showsource?solution_id='.$run_id;
     $data = GetContent($url, $cookie);
@@ -112,7 +111,7 @@ function Querier_HUST($row) {
 	$run_id = $row['run_id'];
 	$pid = $row['origin_id'];
 	$OJ_URL = $OJ['HUST'];
-	$cookie = SCRIPT_ROOT.'HUST_cookie.tmp';
+	$cookie = SCRIPT_ROOT.'HUST_'.$row['account'].'.tmp';
     GetContent($url, $cookie);
 	$url = $OJ_URL.'solution/source/'.$run_id;
     $data = GetContent($url, $cookie);
@@ -135,7 +134,7 @@ function Querier_FJNU($row) {
 	global $OJ;
 	$run_id = $row['run_id'];
 	$OJ_URL = $OJ['FJNU'];
-	$cookie = SCRIPT_ROOT.'FJNU_cookie.tmp';
+	$cookie = SCRIPT_ROOT.'FJNU_'.$row['account'].'.tmp';
 	$url = $OJ_URL.'showsource.php?id='.$run_id;
     $data = GetContent($url, $cookie);
     if(strstr($data, 'I am sorry')) {

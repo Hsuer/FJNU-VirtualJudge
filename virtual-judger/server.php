@@ -1,5 +1,6 @@
 <?php
 require_once("config.php");
+require_once("account.php");
 require_once("conn.php");
 require_once("function.php");
 require_once("submitter.php");

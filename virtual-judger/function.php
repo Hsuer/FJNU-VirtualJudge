@@ -24,6 +24,14 @@ function getStatus($status_id) {
 	return $row;
 }
 
+function getAccount($OJ) {
+	global $account;
+	$total_num = count($account[$OJ]);
+	echo 'tot:' . $total_num;
+	$rand = rand(0, $total_num - 1);
+	return $account[$OJ][$rand];
+}
+
 function setSubmitted($status_id) {
 	global $conn;
 	$sql = "update status set result = 'Submitted' where id = '".$conn->real_escape_string($status_id)."'";
