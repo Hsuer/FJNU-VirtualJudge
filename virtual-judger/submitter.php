@@ -1,35 +1,41 @@
 <?php
 function Submitter($status_id) {
 	$row = getStatus($status_id);
+    $created_at = strtotime($row['created_at']);
     $acc_rand = getAccount($row['origin_oj']);
-    $row['account'] = $acc_rand['account'];
-    $row['password'] = $acc_rand['password'];
-    switch ($row['origin_oj']) {
-    	case 'HDU':
-    		$run_id = Submitter_HDU($row);
-    		break;
-    	case 'FZU':
-    		$run_id = Submitter_FZU($row);
-    		break;
-    	case 'POJ':
-    		$run_id = Submitter_POJ($row);
-    		break;
-    	case 'HUST':
-    		$run_id = Submitter_HUST($row);
-    		break;
-    	case 'FJNU':
-    		$run_id = Submitter_FJNU($row);
-    		break;
-    	default:
-    		$run_id = 0;
-    		break;
-    }
-    if($run_id != 0) {
-        $row['run_id'] = $run_id;
-        return $row;
-    }
-    else {
-        return null;
+    $row['account'] = trim($acc_rand['account']);
+    $row['password'] = trim($acc_rand['password']);
+    while(true) {
+        switch ($row['origin_oj']) {
+        	case 'HDU':
+        		$run_id = Submitter_HDU($row);
+        		break;
+        	case 'FZU':
+        		$run_id = Submitter_FZU($row);
+        		break;
+        	case 'POJ':
+        		$run_id = Submitter_POJ($row);
+        		break;
+        	case 'HUST':
+        		$run_id = Submitter_HUST($row);
+        		break;
+        	case 'FJNU':
+        		$run_id = Submitter_FJNU($row);
+        		break;
+        	default:
+        		$run_id = 0;
+        		break;
+        }
+        if($run_id != 0) {
+            $row['run_id'] = $run_id;
+            return $row;
+        }
+        else {
+            sleep(2);
+        }
+        if(time() - $created_at > 180) {
+            return null;
+        }
     }
 }
 

@@ -2,6 +2,7 @@
 /*
 	Please replace the account and password according to the following format.
 	You can add accounts as many as you want. XD~
+	If judge result shows 'Submit Error', but there is nothing wrong with the remote OJ, check account available please.
 */
 $account = array(
 	'HDU' => 

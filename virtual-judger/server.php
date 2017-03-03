@@ -21,7 +21,7 @@ $serv->on('Task', function ($serv, $task_id, $from_id, $data) {
 	    $status_id = intval($data['status_id']);
 		$row = Submitter($status_id);
 		if($row != null) {
-			setSubmitted($status_id);
+			setSubmitted($row);
 			Querier($row);
 		}
 		else {

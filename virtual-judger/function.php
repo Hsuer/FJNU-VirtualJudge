@@ -11,12 +11,11 @@ function getStatus($status_id) {
 	global $conn;
 	$sql = "select
 			status.id,status.user_id,status.language,status.result,status.created_at,
-			problems.origin_oj,problems.origin_id,solutions.code
+			status.problem_id,status.contest_id,
+			problems.origin_oj,problems.origin_id,solutions.code 
 			from status 
-			left join problems 
-			on status.problem_id = problems.id 
-			left join solutions 
-			on status.id = solutions.id
+			left join problems on status.problem_id = problems.id 
+			left join solutions on status.id = solutions.id 
 			where status.id = '".$conn->real_escape_string($status_id)."'";
 	$result = $conn->query($sql);
 	$row = $result->fetch_array(MYSQLI_ASSOC);
@@ -31,10 +30,17 @@ function getAccount($OJ) {
 	return $account[$OJ][$rand];
 }
 
-function setSubmitted($status_id) {
+function setSubmitted($row) {
 	global $conn;
+	$status_id = $row['id'];
 	$sql = "update status set result = 'Submitted' where id = '".$conn->real_escape_string($status_id)."'";
 	$conn->query($sql);
+	$sql_ = "update problems set submit_num = submit_num + 1 where id = '".$row['problem_id']."'";
+	$conn->query($sql_);
+	if($row['contest_id'] != null) {
+		$sql__ = "update contests_problems set submit_num = submit_num + 1 where contest_id = '".$row['contest_id']."' and problem_id = '".$row['problem_id']."'";
+		$conn->query($sql__);
+	}
 }
 
 function setSubmitError($status_id) {
@@ -58,37 +64,6 @@ function setResult($status_id, $result, $time, $memory) {
 			where id = '".$conn->real_escape_string($status_id)."'";
     $result = $conn->query($sql);
 }
-
-// function setProblem($problem) {
-// 	global $conn;
-// 	$title = $problem['title'];
-// 	$origin_oj = $problem['origin_oj'];
-// 	$origin_id = $problem['origin_id'];
-// 	$time = $problem['time'];
-// 	$memory = $problem['memory'];
-// 	$special_judge = $problem['special_judge'];
-// 	$description = $problem['description'];
-// 	$input = $problem['input'];
-// 	$output = $problem['output'];
-// 	$sample_input = $problem['sample_input'];
-// 	$sample_output = $problem['sample_output'];
-// 	$hint = $problem['hint'];
-// 	$author = $problem['author'];
-// 	$source = $problem['source'];
-// 	$available = 0;
-// 	$ac_num = 0;
-// 	$submit_num = 0;
-// 	$created_at = date('Y-m-d H:i:s', time());
-// 	$updated_at = date('Y-m-d H:i:s', time());
-// 	$sql = "insert into problems(title, origin_oj, origin_id, time, memory, special_judge, description, input, output, sample_input, sample_output, hint, author, source, available, ac_num, submit_num, created_at, updated_at) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-// 	if ($stmt = $conn->prepare($sql)) {
-// 		$stmt->bind_param("sssiiissssssssiiiss", $title, $origin_oj, $origin_id, $time, $memory, $special_judge, $description, $input, $output, $sample_input, $sample_output, $hint, $author, $source, $available, $ac_num, $submit_num, $created_at, $updated_at);
-// 		$stmt->execute();
-// 		$stmt->close();
-// 	} else {
-// 	    die("Errormessage: ". $conn->error);
-// 	}
-// }
 
 function setProblem($problem) {
 	global $conn;
@@ -136,13 +111,6 @@ function setProblem($problem) {
 	if(!$conn->query($sql)) {
 		printf("Errormessage: %s\n", $conn->error);
 	}
-	// if ($stmt = $conn->prepare($sql)) {
-	// 	$stmt->bind_param("sssiiissssssssiiiss", $title, $origin_oj, $origin_id, $time, $memory, $special_judge, $description, $input, $output, $sample_input, $sample_output, $hint, $author, $source, $available, $ac_num, $submit_num, $created_at, $updated_at);
-	// 	$stmt->execute();
-	// 	$stmt->close();
-	// } else {
-	//     die("Errormessage: ". $conn->error);
-	// }
 }
 
 function resetProblem($problem) {
@@ -195,7 +163,7 @@ function getContent($url, $cookie = '', $post = '', $returnCookie = 0) {
     curl_setopt($curl, CURLOPT_HEADER, 0);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($curl, CURLOPT_TIMEOUT, 60);
-    curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
+    curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 30);
     if($returnCookie) {
         curl_setopt($curl, CURLOPT_COOKIEJAR, $cookie);
     }
@@ -241,4 +209,35 @@ function getContent($url, $cookie = '', $post = '', $returnCookie = 0) {
 // 	global $conn;
 // 	$sql = "update status set run_id = '$run_id' where id = '$status_id'";
 // 	$conn->query($sql);
+// }
+
+// function setProblem($problem) {
+// 	global $conn;
+// 	$title = $problem['title'];
+// 	$origin_oj = $problem['origin_oj'];
+// 	$origin_id = $problem['origin_id'];
+// 	$time = $problem['time'];
+// 	$memory = $problem['memory'];
+// 	$special_judge = $problem['special_judge'];
+// 	$description = $problem['description'];
+// 	$input = $problem['input'];
+// 	$output = $problem['output'];
+// 	$sample_input = $problem['sample_input'];
+// 	$sample_output = $problem['sample_output'];
+// 	$hint = $problem['hint'];
+// 	$author = $problem['author'];
+// 	$source = $problem['source'];
+// 	$available = 0;
+// 	$ac_num = 0;
+// 	$submit_num = 0;
+// 	$created_at = date('Y-m-d H:i:s', time());
+// 	$updated_at = date('Y-m-d H:i:s', time());
+// 	$sql = "insert into problems(title, origin_oj, origin_id, time, memory, special_judge, description, input, output, sample_input, sample_output, hint, author, source, available, ac_num, submit_num, created_at, updated_at) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+// 	if ($stmt = $conn->prepare($sql)) {
+// 		$stmt->bind_param("sssiiissssssssiiiss", $title, $origin_oj, $origin_id, $time, $memory, $special_judge, $description, $input, $output, $sample_input, $sample_output, $hint, $author, $source, $available, $ac_num, $submit_num, $created_at, $updated_at);
+// 		$stmt->execute();
+// 		$stmt->close();
+// 	} else {
+// 	    die("Errormessage: ". $conn->error);
+// 	}
 // }
