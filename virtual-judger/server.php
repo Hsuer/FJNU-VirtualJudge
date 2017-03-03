@@ -1,7 +1,7 @@
 <?php
 require_once("config.php");
-require_once("account.php");
 require_once("conn.php");
+require_once("account.php");
 require_once("function.php");
 require_once("submitter.php");
 require_once("querier.php");
@@ -11,7 +11,7 @@ error_reporting(0);
 define('SCRIPT_ROOT',dirname(__FILE__).'/cookie/');
 
 $serv = new Swoole\Server("0.0.0.0", 9503, SWOOLE_SOCK_TCP);
-$serv->set(array('task_worker_num' => 16));
+$serv->set(array('task_worker_num' => 8));
 $serv->on('Receive', function($serv, $fd, $from_id, $data) {
 	$json = json_decode($data, true);
     $task_id = $serv->task($json);

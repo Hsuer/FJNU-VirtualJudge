@@ -27,7 +27,6 @@ function getStatus($status_id) {
 function getAccount($OJ) {
 	global $account;
 	$total_num = count($account[$OJ]);
-	echo 'tot:' . $total_num;
 	$rand = rand(0, $total_num - 1);
 	return $account[$OJ][$rand];
 }
@@ -60,6 +59,37 @@ function setResult($status_id, $result, $time, $memory) {
     $result = $conn->query($sql);
 }
 
+// function setProblem($problem) {
+// 	global $conn;
+// 	$title = $problem['title'];
+// 	$origin_oj = $problem['origin_oj'];
+// 	$origin_id = $problem['origin_id'];
+// 	$time = $problem['time'];
+// 	$memory = $problem['memory'];
+// 	$special_judge = $problem['special_judge'];
+// 	$description = $problem['description'];
+// 	$input = $problem['input'];
+// 	$output = $problem['output'];
+// 	$sample_input = $problem['sample_input'];
+// 	$sample_output = $problem['sample_output'];
+// 	$hint = $problem['hint'];
+// 	$author = $problem['author'];
+// 	$source = $problem['source'];
+// 	$available = 0;
+// 	$ac_num = 0;
+// 	$submit_num = 0;
+// 	$created_at = date('Y-m-d H:i:s', time());
+// 	$updated_at = date('Y-m-d H:i:s', time());
+// 	$sql = "insert into problems(title, origin_oj, origin_id, time, memory, special_judge, description, input, output, sample_input, sample_output, hint, author, source, available, ac_num, submit_num, created_at, updated_at) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+// 	if ($stmt = $conn->prepare($sql)) {
+// 		$stmt->bind_param("sssiiissssssssiiiss", $title, $origin_oj, $origin_id, $time, $memory, $special_judge, $description, $input, $output, $sample_input, $sample_output, $hint, $author, $source, $available, $ac_num, $submit_num, $created_at, $updated_at);
+// 		$stmt->execute();
+// 		$stmt->close();
+// 	} else {
+// 	    die("Errormessage: ". $conn->error);
+// 	}
+// }
+
 function setProblem($problem) {
 	global $conn;
 	$title = $problem['title'];
@@ -81,14 +111,38 @@ function setProblem($problem) {
 	$submit_num = 0;
 	$created_at = date('Y-m-d H:i:s', time());
 	$updated_at = date('Y-m-d H:i:s', time());
-	$sql = "insert into problems(title, origin_oj, origin_id, time, memory, special_judge, description, input, output, sample_input, sample_output, hint, author, source, available, ac_num, submit_num, created_at, updated_at) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-	if ($stmt = $conn->prepare($sql)) {
-		$stmt->bind_param("sssiiissssssssiiiss", $title, $origin_oj, $origin_id, $time, $memory, $special_judge, $description, $input, $output, $sample_input, $sample_output, $hint, $author, $source, $available, $ac_num, $submit_num, $created_at, $updated_at);
-		$stmt->execute();
-		$stmt->close();
-	} else {
-	    die("Errormessage: ". $conn->error);
+	$sql = "insert into problems(title, origin_oj, origin_id, time, memory, special_judge, description, input, output, sample_input, sample_output, hint, author, source, available, ac_num, submit_num, created_at, updated_at) 
+		values (
+		'".$conn->real_escape_string($title)."',
+		'".$conn->real_escape_string($origin_oj)."',
+		'".$conn->real_escape_string($origin_id)."',
+		'".$conn->real_escape_string($time)."',
+		'".$conn->real_escape_string($memory)."',
+		'".$conn->real_escape_string($special_judge)."',
+		'".$conn->real_escape_string($description)."',
+		'".$conn->real_escape_string($input)."',
+		'".$conn->real_escape_string($output)."',
+		'".$conn->real_escape_string($sample_input)."',
+		'".$conn->real_escape_string($sample_output)."',
+		'".$conn->real_escape_string($hint)."',
+		'".$conn->real_escape_string($author)."',
+		'".$conn->real_escape_string($source)."',
+		'".$conn->real_escape_string($available)."',
+		'".$conn->real_escape_string($ac_num)."',
+		'".$conn->real_escape_string($submit_num)."',
+		'".$conn->real_escape_string($created_at)."',
+		'".$conn->real_escape_string($updated_at)."'
+	)";
+	if(!$conn->query($sql)) {
+		printf("Errormessage: %s\n", $conn->error);
 	}
+	// if ($stmt = $conn->prepare($sql)) {
+	// 	$stmt->bind_param("sssiiissssssssiiiss", $title, $origin_oj, $origin_id, $time, $memory, $special_judge, $description, $input, $output, $sample_input, $sample_output, $hint, $author, $source, $available, $ac_num, $submit_num, $created_at, $updated_at);
+	// 	$stmt->execute();
+	// 	$stmt->close();
+	// } else {
+	//     die("Errormessage: ". $conn->error);
+	// }
 }
 
 function resetProblem($problem) {
@@ -129,8 +183,9 @@ function resetProblem($problem) {
 				source = '".$conn->real_escape_string($source)."', 
 				updated_at = '".$conn->real_escape_string($updated_at)."' 
 				where id = '".$conn->real_escape_string($id)."'";
-		if(!$conn->query($sql))
+		if(!$conn->query($sql)) {
 			printf("Errormessage: %s\n", $conn->error);
+		}
 	}
 }
 

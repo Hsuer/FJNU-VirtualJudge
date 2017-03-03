@@ -1,6 +1,8 @@
 <?php
-//Please replace the account and password according to the following format.
-//You can add accounts as many as you want. XD~
+/*
+	Please replace the account and password according to the following format.
+	You can add accounts as many as you want. XD~
+*/
 $account = array(
 	'HDU' => 
 	[

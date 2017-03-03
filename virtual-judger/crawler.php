@@ -15,32 +15,11 @@ function Crawler($origin_oj, $origin_id) {
             break;
     }
     if(isset($problem)) {
-        // var_dump($problem);
     	return $problem;
     }
     else {
         return null;
     }
-}
-
-function init_array() {
-    return array(
-        "title"=>"",
-        "origin_oj"=>"",
-        "origin_id"=>"",
-        "memory"=>0,
-        "time"=>0,
-        "description"=>"",
-        "input"=>"",
-        "output"=>"",
-        "sample_input"=>"",
-        "sample_output"=>"",
-        "hint"=>"",
-        "source"=>"",
-        "author"=>"",
-        "special_judge"=>0,
-        "available"=>0,
-    );
 }
 
 function Crawler_HDU($pid) {
@@ -139,7 +118,7 @@ function getImage($OJ_NAME, $pid, $str, $type) {
     $OJ_URL = $OJ[$OJ_NAME];
     $reg="/< *im[a]?g[^>]*src *= *[\"\\']?([^\"\\'>]*)[^>]*>/si";
     preg_match_all($reg,$str,$match);
-    for($i=0;$i<count($match[0]);$i++){
+    for($i = 0; $i < count($match[0]); $i++){
         $img_path_name = $match[1][$i];
         $img_path_name = normalizeURL($img_path_name);
         // echo $img_path_name.PHP_EOL;
@@ -167,3 +146,22 @@ function getImage($OJ_NAME, $pid, $str, $type) {
     return $str;
 }
 
+function init_array() {
+    return array(
+        "title"=>"",
+        "origin_oj"=>"",
+        "origin_id"=>"",
+        "memory"=>0,
+        "time"=>0,
+        "description"=>"",
+        "input"=>"",
+        "output"=>"",
+        "sample_input"=>"",
+        "sample_output"=>"",
+        "hint"=>"",
+        "source"=>"",
+        "author"=>"",
+        "special_judge"=>0,
+        "available"=>0,
+    );
+}

@@ -2,7 +2,6 @@
 function Submitter($status_id) {
 	$row = getStatus($status_id);
     $acc_rand = getAccount($row['origin_oj']);
-    var_dump($acc_rand);
     $row['account'] = $acc_rand['account'];
     $row['password'] = $acc_rand['password'];
     switch ($row['origin_oj']) {
