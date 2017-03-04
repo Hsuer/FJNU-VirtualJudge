@@ -1,6 +1,6 @@
 <?php
 function Crawler($origin_oj, $origin_id) {
-	$problem = null;
+    $problem = null;
     switch ($origin_oj) {
         case 'HDU':
             $problem = Crawler_HDU($origin_id);
@@ -15,7 +15,7 @@ function Crawler($origin_oj, $origin_id) {
             break;
     }
     if(isset($problem)) {
-    	return $problem;
+        return $problem;
     }
     else {
         return null;
