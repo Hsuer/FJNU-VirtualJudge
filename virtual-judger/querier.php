@@ -24,10 +24,11 @@ function Querier($row) {
 		}
 		// echo $status_id . ":" . $status['result'] . PHP_EOL;
 		if(!empty($status['result'])) {
-			setResult($row['id'], $status['result'], $status['time'], $status['memory']);
-		}
-		if(checkStatus($status['result'])) {
-			break;
+			$std_result = checkStatus($row['origin_oj'], $status['result']);
+			setResult($row, $std_result, $status['result'], $status['time'], $status['memory']);
+			if($std_result != NULL) {
+				break;
+			}
 		}
 		if(time() - $created_at > 1800) {
 			setJudgeError($row['id']);
