@@ -33,7 +33,7 @@ function Submitter($status_id) {
         else {
             sleep(2);
         }
-        if(time() - $created_at > 180) {
+        if(time() - $created_at > 1800) {
             return null;
         }
     }

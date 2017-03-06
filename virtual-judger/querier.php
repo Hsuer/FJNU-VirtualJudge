@@ -22,7 +22,6 @@ function Querier($row) {
                 $status = null;
                 break;
         }
-        // echo $status_id . ":" . $status['result'] . PHP_EOL;
         if(!empty($status['result'])) {
             $std_result = checkStatus($row['origin_oj'], $status['result']);
             setResult($row, $std_result, $status['result'], $status['time'], $status['memory']);
@@ -31,7 +30,6 @@ function Querier($row) {
             }
         }
         if(time() - $created_at > 1800) {
-            setJudgeError($row['id']);
             break;
         }
         sleep(2);

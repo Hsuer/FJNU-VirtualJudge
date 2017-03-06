@@ -12,7 +12,7 @@ function checkStatus($OJ, $str) {
 function getStatus($status_id) {
     global $conn;
     $sql = "select
-            status.id,status.user_id,status.language,status.result,status.created_at,
+            status.id,status.user_id,status.language,status.result,status.updated_at as created_at,
             status.problem_id,status.contest_id,
             problems.origin_oj,problems.origin_id,solutions.code 
             from status 
@@ -109,18 +109,6 @@ function setResult($row, $std_result, $result, $time, $memory) {
                 break;
         }
     }
-}
-
-function setSubmitError($status_id) {
-    global $conn;
-    $sql = "update status set result = 'Submit Error' where id = '".$conn->real_escape_string($status_id)."'";
-    $conn->query($sql);
-}
-
-function setJudgeError($status_id) {
-    global $conn;
-    $sql = "update status set result = 'Judge Error' where id = '".$conn->real_escape_string($status_id)."'";
-    $conn->query($sql);
 }
 
 function setProblem($problem) {
@@ -267,4 +255,16 @@ function getContent($url, $cookie = '', $post = '', $returnCookie = 0) {
 //  }
 //  $row = mysqli_fetch_all($result, MYSQLI_ASSOC);
 //  return $row;
+// }
+
+// function setSubmitError($status_id) {
+//     global $conn;
+//     $sql = "update status set result = 'Submit Error' where id = '".$conn->real_escape_string($status_id)."'";
+//     $conn->query($sql);
+// }
+
+// function setJudgeError($status_id) {
+//     global $conn;
+//     $sql = "update status set result = 'Judge Error' where id = '".$conn->real_escape_string($status_id)."'";
+//     $conn->query($sql);
 // }

@@ -25,9 +25,6 @@ $serv->on('Task', function ($serv, $task_id, $from_id, $data) {
             setSubmitted($row);
             Querier($row);
         }
-        else {
-            setSubmitError($status_id);
-        }
     }
     else if($data['task'] == "crawl") {
         $origin_oj = $data['oj'];
