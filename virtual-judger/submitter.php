@@ -26,6 +26,7 @@ function Submitter($status_id) {
                 $run_id = 0;
                 break;
         }
+        var_dump($run_id);
         if($run_id != 0) {
             $row['run_id'] = $run_id;
             return $row;

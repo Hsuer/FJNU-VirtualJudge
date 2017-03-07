@@ -9,6 +9,17 @@ function checkStatus($OJ, $str) {
     return false;
 }
 
+function checkCE($OJ, $str) {
+    $str = trim($str);
+    global $JUDGE_RESULT;
+    if(strstr($str, $JUDGE_RESULT[$OJ]['CE'])) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
 function getStatus($status_id) {
     global $conn;
     $sql = "select
@@ -44,6 +55,15 @@ function setSubmitted($row) {
     if($row['contest_id'] != null) {
         $sql = "update contests_problems set submit_num = submit_num + 1 where contest_id = '".$conn->real_escape_string($row['contest_id'])."' and problem_id = '".$conn->real_escape_string($row['problem_id'])."'";
         $conn->query($sql);
+    }
+}
+
+function setCeinfo($row, $ceinfo) {
+    global $conn;
+    $status_id = $row['id'];
+    $sql = "insert into compile_info(status_id, info) values ('".$conn->real_escape_string($status_id)."','".$conn->real_escape_string($ceinfo)."')";
+    if(!$conn->query($sql)) {
+        printf("Errormessage: %s\n", $conn->error);
     }
 }
 

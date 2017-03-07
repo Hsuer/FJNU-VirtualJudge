@@ -15,6 +15,7 @@ $account = array(
     [
         ['account' => 'fjnuvj1', 'password' => 'fjnuvj113'],
         ['account' => 'fjnuvj2', 'password' => 'fjnuvj113'],
+        ['account' => 'fjnuvj3', 'password' => 'fjnuvj113'],
     ],
 
     'FZU' => 
