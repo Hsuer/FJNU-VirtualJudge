@@ -14,7 +14,7 @@ function Crawler($origin_oj, $origin_id) {
         default:
             break;
     }
-    if(isset($problem)) {
+    if(!empty($problem['title'])) {
         return $problem;
     }
     else {
