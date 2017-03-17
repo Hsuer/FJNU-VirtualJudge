@@ -114,7 +114,7 @@ function process($OJ_NAME, $pid, $ret) {
 }
 
 function getImage($OJ_NAME, $pid, $str, $type) {
-    global $OJ, $BASE_PATH;
+    global $OJ, $BASE_PATH, $URL_PATH;
     $OJ_URL = $OJ[$OJ_NAME];
     $reg="/< *im[a]?g[^>]*src *= *[\"\\']?([^\"\\'>]*)[^>]*>/si";
     preg_match_all($reg,$str,$match);
@@ -126,9 +126,9 @@ function getImage($OJ_NAME, $pid, $str, $type) {
         // echo $img_url;
         $str = preg_replace_callback(
             $reg,
-            function($matches) use($pid, $OJ_NAME, $type) {
+            function($matches) use($pid, $OJ_NAME, $type, $URL_PATH) {
                 static $i=0;
-                $matches[$i]="<img src=/data/$OJ_NAME/$pid/$type-$i.jpg>";
+                $matches[$i]="<img src=$URL_PATH/data/$OJ_NAME/$pid/$type-$i.jpg>";
                 return $matches[$i++];
             },
             $str

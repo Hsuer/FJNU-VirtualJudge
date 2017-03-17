@@ -1,4 +1,26 @@
 <?php
+function connect() {
+    global $conn, $DB_CONN;
+    $conn = new mysqli($DB_CONN['server'], $DB_CONN['username'], $DB_CONN['password'], $DB_CONN['database']);
+    if ($conn->connect_error) {
+        die("Connect failed: " . $conn->connect_error);
+    } 
+    $conn->set_charset("utf8");
+}
+
+function ConnClose() {
+    global $conn;
+    $conn->close();
+}
+
+function checkConnAlive() {
+    global $conn;
+    if (!$conn->ping()) {
+        connect();
+        printf ("Connection is reconnected!\n");
+    }
+}
+
 function checkStatus($OJ, $str) {
     $str = trim($str);
     global $JUDGE_RESULT;
@@ -252,39 +274,3 @@ function getContent($url, $cookie = '', $post = '', $returnCookie = 0) {
     curl_close($curl); 
     return $data;
 }
-
-// function sendmsg($status_id) {
-//  $client = new swoole_client(SWOOLE_SOCK_TCP);
-//  if (!$client->connect('127.0.0.1', 9503, -1))
-//  {
-//      exit("connect failed. Error: {$client->errCode}\n");
-//  }
-//  $data = $status_id;
-//  $client->send($data);
-//  echo "Send Successfully: ".$client->recv().PHP_EOL;
-//  $client->close();
-// }
-
-// function getNewStatus() {
-//  global $conn;
-//  $sql = "select id from status where result = 'Pending'";
-//  $result = mysqli_query($conn, $sql);
-//  if (!$result) {
-//      printf("Error: %s\n", mysqli_error($conn));
-//      exit();
-//  }
-//  $row = mysqli_fetch_all($result, MYSQLI_ASSOC);
-//  return $row;
-// }
-
-// function setSubmitError($status_id) {
-//     global $conn;
-//     $sql = "update status set result = 'Submit Error' where id = '".$conn->real_escape_string($status_id)."'";
-//     $conn->query($sql);
-// }
-
-// function setJudgeError($status_id) {
-//     global $conn;
-//     $sql = "update status set result = 'Judge Error' where id = '".$conn->real_escape_string($status_id)."'";
-//     $conn->query($sql);
-// }
