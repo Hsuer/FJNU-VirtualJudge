@@ -107,6 +107,11 @@ function setResult($row, $std_result, $result, $time, $memory) {
                 $sql = "update users set ac = ac + 1 where id = '".$conn->real_escape_string($user_id)."'";
                 $conn->query($sql);
 
+                if($row['contest_id'] != null) {
+                    $sql = "update contests_problems set ac_num = ac_num + 1 where contest_id = '".$conn->real_escape_string($row['contest_id'])."' and problem_id = '".$conn->real_escape_string($row['problem_id'])."'";
+                    $conn->query($sql);
+                }
+
                 $sql = "select count(*) from status where user_id = '".$conn->real_escape_string($user_id)."' 
                         and result = '".$conn->real_escape_string($std_result_list['AC'])."' 
                         and problem_id like '".$conn->real_escape_string($problem_id)."'";
