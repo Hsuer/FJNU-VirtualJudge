@@ -11,6 +11,9 @@ function Crawler($origin_oj, $origin_id) {
         case 'POJ':
             $problem = Crawler_POJ($origin_id);
             break;
+        case 'FJNU':
+            $problem = Crawler_FJNU($origin_id);
+            break;
         default:
             break;
     }
@@ -105,6 +108,31 @@ function Crawler_POJ($pid){
     }
 }
 
+function Crawler_FJNU($pid){
+    $url = "http://acm.fjnu.edu.cn/JudgeOnline/problem.php?id=$pid";
+    $content = file_get_contents($url);
+    $ret=init_array();
+    if (trim($content) == "") return "No problem called PKU $pid.<br>";
+    if (stripos($content, "Problem is not available") === false){
+        $ret["origin_oj"] = "FJNU"; $ret['origin_id'] = $pid;
+        if (preg_match('/<\/title><center><h2>\d+: (.*)<\/h2><span/sU', $content, $matches)) $ret["title"] = trim($matches[1]);
+        if (preg_match('/Time Limit: <\/span>(.*) Sec&nbsp;&nbsp;<span class=green>/sU', $content, $matches)) $ret["time"] = intval(trim($matches[1])) * 1000;
+        // $ret["case_time_limit"] = $ret["time_limit"];
+        if (preg_match('/Memory Limit: <\/span>(.*) MB<br>/sU', $content, $matches)) $ret["memory"] = intval(trim($matches[1])) * 1024;
+        if (preg_match('/<h3>Description<\/h3><div class=well>(.*)<\/div><h3>Input/sU', $content, $matches)) $ret["description"] = trim($matches[1]);
+        if (preg_match('/<h3>Input<\/h3><div class=well>(.*)<\/div><h3>Output/sU', $content, $matches)) $ret["input"] = trim($matches[1]);
+        if (preg_match('/<h3>Output<\/h3><div class=well>(.*)<\/div><h3>Sample Input/sU', $content, $matches)) $ret["output"] = trim($matches[1]);
+        if (preg_match('/Sample Input<\/h3>\s<pre class=content><span class=sampledata>(.*)<\/span><\/pre><h3>Sample Output/sU', $content, $matches)) $ret["sample_input"] = trim($matches[1]);
+        if (preg_match('/Sample Output<\/h3>\s<pre class=content><span class=sampledata>(.*)<\/span><\/pre><h3>HINT/sU', $content, $matches)) $ret["sample_output"] = trim($matches[1]);
+        if (preg_match('/HINT<\/h3>\s<div class=content><p>(.*)<\/p><\/div><h3>Source<\/h3>/sU', $content, $matches)) $ret["hint"] = trim($matches[1]);
+        if (preg_match('/Source<\/h3>(.*)<\/p><\/div><center>/sU', $content, $matches)) $ret["source"] = trim(strip_tags($matches[1]));
+        // if (strpos($content, '<td style="font-weight:bold; color:red;">Special Judge</td>') !== false) $ret["special_judge"] = 1;
+        // else $ret["special_judge"] = 0;
+        $ret["special_judge"] = 0;
+        return process('FJNU', $pid, $ret);
+    }
+}
+
 function process($OJ_NAME, $pid, $ret) {
     $ret["description"]=getImage($OJ_NAME, $pid, $ret["description"], "D");
     $ret["input"]=getImage($OJ_NAME, $pid, $ret["input"], "I");
@@ -137,9 +165,9 @@ function getImage($OJ_NAME, $pid, $str, $type) {
         readfile($img_url);
         $img = ob_get_contents();
         ob_end_clean();
-        mkdir($BASE_PATH."data/$OJ_NAME/$pid/", 0777, true);
-        chmod($BASE_PATH."data/$OJ_NAME/$pid/", 0777);
-        $fp = fopen($BASE_PATH."data/$OJ_NAME/$pid/$type-$i.jpg","w");
+        mkdir($BASE_PATH."/data/$OJ_NAME/$pid/", 0777, true);
+        chmod($BASE_PATH."/data/$OJ_NAME/$pid/", 0777);
+        $fp = fopen($BASE_PATH."/data/$OJ_NAME/$pid/$type-$i.jpg","w");
         fwrite($fp,$img);
         fclose($fp);
     }

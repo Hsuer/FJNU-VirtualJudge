@@ -23,5 +23,11 @@ $account = array(
         ['account' => 'fjnuvj1', 'password' => 'fjnuvj113'],
         ['account' => 'fjnuvj2', 'password' => 'fjnuvj113'],
     ],
+
+    'FJNU' =>
+    [
+        ['account' => 'fjnuvj1', 'password' => 'fjnuvj113'],
+        ['account' => 'fjnuvj2', 'password' => 'fjnuvj113'],
+    ],
 );
 ?>

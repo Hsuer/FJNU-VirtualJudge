@@ -12,11 +12,8 @@ function Querier($row) {
             case 'POJ':
                 $statusInfo = Querier_POJ($row);
                 break;
-            case 'HUST':
-                $statusInfo =  Querier_HUST($row);
-                break;
             case 'FJNU':
-                $statusInfo =  Querier_FJNU($row);
+                $statusInfo = Querier_FJNU($row);
                 break;
             default:
                 $statusInfo = null;
@@ -126,30 +123,6 @@ function Querier_FZU($row) {
     return $statusInfo;
 }
 
-function Querier_HUST($row) {
-    global $OJ;
-    $run_id = $row['run_id'];
-    $pid = $row['origin_id'];
-    $OJ_URL = $OJ['HUST'];
-    $cookie = SCRIPT_ROOT.'HUST_'.$row['account'].'.tmp';
-    getContent($url, $cookie);
-    $url = $OJ_URL.'solution/source/'.$run_id;
-    $data = getContent($url, $cookie);
-    //Get Time Limit
-    $Pattern = "/<span class=\"badge\">(\\d+)ms<\/span>\\s*Time[\\s\\S]*?/";
-    preg_match ($Pattern, $data, $time);
-    //Get Memory Limit
-    $Pattern = "/<span class=\"badge\">(\\d+)kb<\/span>\\s*Memory/";
-    preg_match ($Pattern, $data, $memory);
-    //Get Judge Result
-    $Pattern = "/<span class=\"badge\">(.*?)<\/span>\\s*Result/";
-    preg_match ($Pattern, $data, $result);
-    $statusInfo['time'] = intval($time[1]);
-    $statusInfo['memory'] = intval($memory[1]);
-    $statusInfo['result'] = $result[1];
-    return $statusInfo;
-}
-
 function Querier_FJNU($row) {
     global $OJ;
     $run_id = $row['run_id'];
@@ -159,8 +132,8 @@ function Querier_FJNU($row) {
     $data = getContent($url, $cookie);
     if(strstr($data, 'I am sorry')) {
         $url = $OJ_URL.'login.php';
-        $login['user_id'] = 'nextver';
-        $login['password'] = '123456';
+        $login['user_id'] = $row['account'];
+        $login['password'] = $row['password'];
         getContent($url, $cookie, $login, 1);
         $url = $OJ_URL.'showsource.php?id='.$run_id;
         $data = getContent($url, $cookie);
@@ -175,5 +148,14 @@ function Querier_FJNU($row) {
     $statusInfo['time'] = intval($time[1]);
     $statusInfo['memory'] = intval($memory[1]);
     $statusInfo['result'] = $result[1];
+    if(checkCE('FJNU', $statusInfo['result'])) {
+        $url = $OJ_URL.'ceinfo.php?sid='.$run_id;
+        $cedata = getContent($url, $cookie);
+        preg_match ('/<pre class=\"brush:c;\" id=\'errtxt\' >([\\s\\S]*?)<\/pre>/', $cedata, $ceinfo);
+        $statusInfo['ceinfo'] = trim(strip_tags($ceinfo[0]));
+    }
+    else {
+        $statusInfo['ceinfo'] = NULL;
+    }
     return $statusInfo;
 }

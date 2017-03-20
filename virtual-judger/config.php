@@ -1,6 +1,6 @@
 <?php
-$BASE_PATH = "/var/www/html/OnlineJudge/public/";
-$URL_PATH = "http://localhost/OnlineJudge/public/";
+$BASE_PATH = "/var/www/html/OnlineJudge/public";
+$URL_PATH = "http://localhost/OnlineJudge/public";
 
 $DB_CONN = array(
     'server'    => "localhost",
@@ -14,8 +14,7 @@ $OJ = array(
     'HDU'        => 'http://acm.hdu.edu.cn/', 
     'POJ'        => 'http://poj.org/', 
     'FZU'        => 'http://acm.fzu.edu.cn/', 
-    'HUST'       => 'http://acm.hust.edu.cn/', 
-    'FJNU'       => 'http://acm.fjnu.edu.cn/',
+    'FJNU'       => 'http://localhost/JudgeOnline/',
     'Codeforces' => 'http://codeforces.com/'
 );
 
@@ -50,6 +49,16 @@ $JUDGE_RESULT = array(
         'OLE'   => 'Output Limit Exceed',
         'RFC'   => 'Restrict Function Call',
         'CE'    => 'Compile Error'
-    ]
+    ],
+    'FJNU' => [
+        'AC'    => 'Accepted',
+        'PE'    => 'Presentation Error',
+        'TLE'   => 'Time Limit Exceeded',
+        'MLE'   => 'Memory Limit Exceeded',
+        'WA'    => 'Wrong Answer',
+        'RE'    => 'Runtime Error',
+        'OLE'   => 'Output Limit Exceeded',
+        'CE'    => 'Compile Error'
+    ],
 );
 ?>

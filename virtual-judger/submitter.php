@@ -16,9 +16,6 @@ function Submitter($status_id) {
             case 'POJ':
                 $run_id = Submitter_POJ($row);
                 break;
-            case 'HUST':
-                $run_id = Submitter_HUST($row);
-                break;
             case 'FJNU':
                 $run_id = Submitter_FJNU($row);
                 break;
@@ -124,49 +121,19 @@ function Submitter_FZU($post){
     return $MaxRunID;
 }
 
-function Submitter_HUST($post){
-    global $OJ;
-    $OJ_URL = $OJ['HUST'];
-    $cookie = SCRIPT_ROOT.'HUST_'.$post['account'].'.tmp';
-    //Check if not Login, then login
-    $data = getContent($OJ_URL, $cookie);
-    if(!strstr($data, '/logout')) {
-        $url = $OJ_URL.'user/login';
-        $login['username'] = $post['account'];
-        $login['pwd'] = $post['password'];
-        $login['code'] = "";
-        getContent($url, $cookie, $login, 1);
-    }
-    //Submit
-    $url = $OJ_URL.'problem/submit';
-    $submit['language'] = $post['language'];
-    $submit['pid'] = $post['origin_id'];
-    $submit['source'] = $post['code'];
-    getContent($url, $cookie, $submit);
-    //Get MAX RUNID
-    $url = $OJ_URL.'status?uid='.$post['account'].'&pid='.$post['origin_id'];
-    $data = getContent($url, $cookie);
-    $Pattern = '/solution\/source\/(\\d*)/';
-    preg_match ($Pattern, $data, $RunID);
-    $MaxRunID = intval($RunID[1]);
-    return $MaxRunID;
-}
-
 function Submitter_FJNU($post){
     global $OJ;
     $OJ_URL = $OJ['FJNU'];
     $cookie = SCRIPT_ROOT.'FJNU_'.$post['account'].'.tmp';
     //Check if not Login, then login
-    $data = getContent($OJ_URL, $cookie);
-    //if(strstr($data, 'Please Login')) {
+    $data = getContent($OJ_URL.'submitpage.php', $cookie);
+    if(strstr($data, 'Please Login')) {
         $url = $OJ_URL.'login.php';
-        $login['user_id'] = 'nextver';
-        $login['password'] = '123456';
+        $login['user_id'] = $post['account'];
+        $login['password'] = $post['password'];
         getContent($url, $cookie, $login, 1);
-   // }
-    //Submit
+    }
     $url = $OJ_URL.'submit.php';
-    //$submit['check'] = 0;
     $submit['language'] = $post['language'];
     $submit['id'] = $post['origin_id'];
     $submit['source'] = $post['code'];
@@ -174,8 +141,7 @@ function Submitter_FJNU($post){
     //Get MAX RUNID
     $url = $OJ_URL.'status.php?user_id='.$login['user_id'].'&problem_id='.$submit['id'];
     $data = getContent($url);
-    $Pattern = "/<\/td><td>\t([\s\S]*?)<\/td><td>/";
-    preg_match ($Pattern, $data, $RunID);
+    preg_match ("/<tr><td>(\\d*)<\/td><td>/", $data, $RunID);
     $MaxRunID = intval($RunID[1]);
     return $MaxRunID;
 }
