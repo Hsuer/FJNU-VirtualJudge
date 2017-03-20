@@ -126,7 +126,7 @@ function Querier_FZU($row) {
 function Querier_FJNU($row) {
     global $OJ;
     $run_id = $row['run_id'];
-    $OJ_URL = $OJ['FJNU'];
+    $OJ_URL = $OJ['FJNU'].'JudgeOnline/';
     $cookie = SCRIPT_ROOT.'FJNU_'.$row['account'].'.tmp';
     $url = $OJ_URL.'showsource.php?id='.$run_id;
     $data = getContent($url, $cookie);

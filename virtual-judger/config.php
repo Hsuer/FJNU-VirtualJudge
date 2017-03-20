@@ -1,6 +1,6 @@
 <?php
 $BASE_PATH = "/var/www/html/OnlineJudge/public";
-$URL_PATH = "http://localhost/OnlineJudge/public";
+$URL_PATH = "/OnlineJudge/public";
 
 $DB_CONN = array(
     'server'    => "localhost",
@@ -14,7 +14,7 @@ $OJ = array(
     'HDU'        => 'http://acm.hdu.edu.cn/', 
     'POJ'        => 'http://poj.org/', 
     'FZU'        => 'http://acm.fzu.edu.cn/', 
-    'FJNU'       => 'http://localhost/JudgeOnline/',
+    'FJNU'       => 'http://acm.fjnu.edu.cn/',
     'Codeforces' => 'http://codeforces.com/'
 );
 
