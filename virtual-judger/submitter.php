@@ -123,7 +123,7 @@ function Submitter_FZU($post){
 
 function Submitter_FJNU($post){
     global $OJ;
-    $OJ_URL = $OJ['FJNU'].'JudgeOnline/';
+    $OJ_URL = $OJ['FJNU'];
     $cookie = SCRIPT_ROOT.'FJNU_'.$post['account'].'.tmp';
     //Check if not Login, then login
     $data = getContent($OJ_URL.'submitpage.php', $cookie);

@@ -26,7 +26,8 @@ function Crawler($origin_oj, $origin_id) {
 }
 
 function Crawler_HDU($pid) {
-    $url="http://acm.hdu.edu.cn/showproblem.php?pid=$pid";
+    global $OJ;
+    $url=$OJ['HDU']."showproblem.php?pid=$pid";
     $content=file_get_contents($url);
     $content=iconv("gbk","UTF-8//IGNORE",$content);
     $ret=init_array();
@@ -60,7 +61,8 @@ function Crawler_HDU($pid) {
 }
 
 function Crawler_FZU($pid) {
-    $url="http://acm.fzu.edu.cn/problem.php?pid=$pid";
+    global $OJ;
+    $url=$OJ['FZU']."problem.php?pid=$pid";
     $content=file_get_contents($url);
     $ret=init_array();
     if (stripos($content,"<font size=\"+3\">No Such Problem!</font>")===false) {
@@ -86,7 +88,8 @@ function Crawler_FZU($pid) {
 }
 
 function Crawler_POJ($pid){
-    $url = "http://poj.org/problem?id=$pid";
+    global $OJ;
+    $url = $OJ['POJ']."problem?id=$pid";
     $content = file_get_contents($url);
     $ret=init_array();
     if (trim($content) == "") return "No problem called PKU $pid.<br>";
@@ -109,10 +112,11 @@ function Crawler_POJ($pid){
 }
 
 function Crawler_FJNU($pid){
-    $url = "http://acm.fjnu.edu.cn/JudgeOnline/problem.php?id=$pid";
+    global $OJ;
+    $url = $OJ['FJNU']."problem.php?id=$pid";
     $content = file_get_contents($url);
     $ret=init_array();
-    if (trim($content) == "") return "No problem called PKU $pid.<br>";
+    if (trim($content) == "") return "No problem called FJNU $pid.<br>";
     if (stripos($content, "Problem is not available") === false){
         $ret["origin_oj"] = "FJNU"; $ret['origin_id'] = $pid;
         if (preg_match('/<\/title><center><h2>\d+: (.*)<\/h2><span/sU', $content, $matches)) $ret["title"] = trim($matches[1]);

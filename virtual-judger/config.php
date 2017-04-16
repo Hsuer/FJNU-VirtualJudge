@@ -1,6 +1,6 @@
 <?php
-$BASE_PATH = "/var/www/html/OnlineJudge/public";
-$URL_PATH = "/OnlineJudge/public";
+$BASE_PATH = "/var/www/html/OnlineJudge/public"; //direct to /var/www/html/OnlineJudge/public
+$URL_PATH = "/OnlineJudge/public";  //direct to http://www.xxx.com/(.../public)
 
 $DB_CONN = array(
     'server'    => "localhost",
