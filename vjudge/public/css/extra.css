@@ -1,0 +1,143 @@
+body {
+    font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif!important;
+    width:100vw;
+    overflow-x: hidden; 
+    overflow-y: auto;
+}
+
+#standing-table {
+	font-size: 12px;
+}
+
+#large-header {
+    height: 300;
+}
+
+.index-bg {
+    width: 100%;
+    margin-top: -22px;
+    min-height: 350px;
+    background: #333 url(../images/Hello-World.jpg) no-repeat center center!important;
+    background-size: cover;
+    position: relative;
+}
+
+.index-bg h1 {
+    color: #ffffff!important;
+    font-size: 75px;
+    letter-spacing: -.02em;
+    line-height: 1.1;
+    font-weight: 700;
+    font-style: normal;
+    text-align: center;
+}
+
+span.failed {
+    color: gray;
+    font-weight: 700;
+    text-align: center;
+}
+
+span.fb-cell-time {
+    color: #fff;
+    font-size: 12px;
+    display: block;
+}
+
+td.first_blood {
+    background: #65bb81;
+}
+
+td.accept {
+    background: #D4FFD0;
+}
+
+.table-bordered>thead>tr>td, .table-bordered>thead>tr>th {
+    border-bottom-width: 1px!important;
+}
+
+.table>thead>tr>th {
+    vertical-align: middle!important;
+    border-bottom: 1px solid #ddd!important; 
+}
+
+.table>tbody>tr>td, .table>tbody>tr>th {
+    vertical-align: middle!important;
+}
+
+#contest-navbar>li>a {
+	color: #777!important;
+}
+
+#contest-navbar>li.active>a {
+	color: #fff!important;
+}
+
+#problem-operation .btn {
+    width: 49%;
+    margin-bottom: 5px;
+}
+
+#problem-block {
+    overflow:hidden;
+}
+
+#problem-block img {
+    width: auto;
+    max-width:80%;
+    display: block;
+}
+
+.help-block-xs {
+    display: block;
+    margin-top: 5px;
+    margin-bottom: -10px;
+    color: #a4aaae;
+}
+
+.progress-xs {
+    margin: 0!important;
+    height: 15px!important;
+}
+
+.success {
+	color: #5cb85c;
+}
+
+.danger {
+	color:#d9534f;
+}
+
+.result {
+	font-weight: 700;
+}
+
+.full-width {
+	width: 100%!important;
+}
+
+footer {
+	margin-bottom: 50px;
+}
+
+.typed-cursor{
+    opacity: 1;
+    -webkit-animation: blink 1.2s infinite;
+    -moz-animation: blink 1.2s infinite;
+    animation: blink 1.2s infinite;
+}
+@keyframes blink{
+    0% { opacity:1; }
+    50% { opacity:0; }
+    100% { opacity:1; }
+}
+@-webkit-keyframes blink{
+    0% { opacity:1; }
+    50% { opacity:0; }
+    100% { opacity:1; }
+}
+@-moz-keyframes blink{
+    0% { opacity:1; }
+    50% { opacity:0; }
+    100% { opacity:1; }
+}
