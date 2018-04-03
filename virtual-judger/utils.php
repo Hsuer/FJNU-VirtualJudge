@@ -1,23 +1,15 @@
 <?php
-function connect() {
-    global $conn, $DB_CONN;
-    $conn = new mysqli($DB_CONN['server'], $DB_CONN['username'], $DB_CONN['password'], $DB_CONN['database']);
-    if ($conn->connect_error) {
-        die("Connect failed: " . $conn->connect_error);
-    } 
-    $conn->set_charset("utf8");
-}
+namespace Judger\Utils;
+include 'config.php';
+include 'account.php';
+include 'conn.php';
 
-function ConnClose() {
-    global $conn;
-    $conn->close();
-}
+use Judger\Conn;
 
-function checkConnAlive() {
-    global $conn;
-    if (!$conn->ping()) {
-        connect();
-        printf ("Connection is reconnected!\n");
+function init() {
+    if(!is_dir("./cookie")) {
+        mkdir("./cookie", 0777, true);
+        chmod("./cookie", 0777);
     }
 }
 
@@ -42,8 +34,15 @@ function checkCE($OJ, $str) {
     }
 }
 
+function getAccount($OJ) {
+    global $account;
+    $total_num = count($account[$OJ]);
+    $rand = rand(0, $total_num - 1);
+    return $account[$OJ][$rand];
+}
+
 function getStatus($status_id) {
-    global $conn;
+    $conn = Conn\ConnectMysqli::getIntance();
     $sql = "select
             status.id,status.user_id,status.language,status.result,status.updated_at as created_at,
             status.problem_id,status.contest_id,
@@ -58,15 +57,8 @@ function getStatus($status_id) {
     return $row;
 }
 
-function getAccount($OJ) {
-    global $account;
-    $total_num = count($account[$OJ]);
-    $rand = rand(0, $total_num - 1);
-    return $account[$OJ][$rand];
-}
-
 function setSubmitted($row) {
-    global $conn;
+    $conn = Conn\ConnectMysqli::getIntance();
     $status_id = $row['id'];
     $sql = "update status set result = 'Submitted' where id = '".$conn->real_escape_string($status_id)."'";
     $conn->query($sql);
@@ -81,7 +73,7 @@ function setSubmitted($row) {
 }
 
 function setCeinfo($row, $ceinfo) {
-    global $conn;
+    $conn = Conn\ConnectMysqli::getIntance();
     $status_id = $row['id'];
     $sql = "insert into compile_info(status_id, info) values ('".$conn->real_escape_string($status_id)."','".$conn->real_escape_string($ceinfo)."')";
     if(!$conn->query($sql)) {
@@ -90,10 +82,11 @@ function setCeinfo($row, $ceinfo) {
 }
 
 function setResult($row, $std_result, $result, $time, $memory) {
+    $conn = Conn\ConnectMysqli::getIntance();
     $status_id = $row['id'];
     $user_id = $row['user_id'];
     $problem_id = $row['problem_id'];
-    global $conn, $JUDGE_RESULT;
+    global $JUDGE_RESULT;
     $std_result_list = $JUDGE_RESULT[$row['origin_oj']];
     $sql = "update status set 
             result='".$conn->real_escape_string($result)."',
@@ -123,31 +116,14 @@ function setResult($row, $std_result, $result, $time, $memory) {
                 }
                 break;
             case 'WA':
-                $sql = "update users set wa = wa + 1 where id = '".$conn->real_escape_string($user_id)."'";
-                $conn->query($sql);
-                break;
             case 'CE':
-                $sql = "update users set ce = ce + 1 where id = '".$conn->real_escape_string($user_id)."'";
-                $conn->query($sql);
-                break;
             case 'PE':
-                $sql = "update users set pe = pe + 1 where id = '".$conn->real_escape_string($user_id)."'";
-                $conn->query($sql);
-                break;
             case 'RE':
-                $sql = "update users set re = re + 1 where id = '".$conn->real_escape_string($user_id)."'";
-                $conn->query($sql);
-                break;
             case 'TLE':
-                $sql = "update users set tle = tle + 1 where id = '".$conn->real_escape_string($user_id)."'";
-                $conn->query($sql);
-                break;
             case 'MLE':
-                $sql = "update users set mle = mle + 1 where id = '".$conn->real_escape_string($user_id)."'";
-                $conn->query($sql);
-                break;
             case 'OLE':
-                $sql = "update users set ole = ole + 1 where id = '".$conn->real_escape_string($user_id)."'";
+                $new_result = strtolower($std_result);
+                $sql = "update users set '$new_result' = '$new_result' + 1 where id = '".$conn->real_escape_string($user_id)."'";
                 $conn->query($sql);
                 break;
             default:
@@ -159,47 +135,28 @@ function setResult($row, $std_result, $result, $time, $memory) {
 }
 
 function setProblem($problem) {
-    global $conn;
-    $title = $problem['title'];
-    $origin_oj = $problem['origin_oj'];
-    $origin_id = $problem['origin_id'];
-    $time = $problem['time'];
-    $memory = $problem['memory'];
-    $special_judge = $problem['special_judge'];
-    $description = $problem['description'];
-    $input = $problem['input'];
-    $output = $problem['output'];
-    $sample_input = $problem['sample_input'];
-    $sample_output = $problem['sample_output'];
-    $hint = $problem['hint'];
-    $author = $problem['author'];
-    $source = $problem['source'];
-    $available = 0;
-    $ac_num = 0;
-    $submit_num = 0;
-    $created_at = date('Y-m-d H:i:s', time());
-    $updated_at = date('Y-m-d H:i:s', time());
+    $conn = Conn\ConnectMysqli::getIntance();
     $sql = "insert into problems(title, origin_oj, origin_id, time, memory, special_judge, description, input, output, sample_input, sample_output, hint, author, source, available, ac_num, submit_num, created_at, updated_at) 
         values (
-        '".$conn->real_escape_string($title)."',
-        '".$conn->real_escape_string($origin_oj)."',
-        '".$conn->real_escape_string($origin_id)."',
-        '".$conn->real_escape_string($time)."',
-        '".$conn->real_escape_string($memory)."',
-        '".$conn->real_escape_string($special_judge)."',
-        '".$conn->real_escape_string($description)."',
-        '".$conn->real_escape_string($input)."',
-        '".$conn->real_escape_string($output)."',
-        '".$conn->real_escape_string($sample_input)."',
-        '".$conn->real_escape_string($sample_output)."',
-        '".$conn->real_escape_string($hint)."',
-        '".$conn->real_escape_string($author)."',
-        '".$conn->real_escape_string($source)."',
-        '".$conn->real_escape_string($available)."',
-        '".$conn->real_escape_string($ac_num)."',
-        '".$conn->real_escape_string($submit_num)."',
-        '".$conn->real_escape_string($created_at)."',
-        '".$conn->real_escape_string($updated_at)."'
+        '".$conn->real_escape_string($problem['title'])."',
+        '".$conn->real_escape_string($problem['origin_oj'])."',
+        '".$conn->real_escape_string($problem['origin_id'])."',
+        '".$conn->real_escape_string($problem['time'])."',
+        '".$conn->real_escape_string($problem['memory'])."',
+        '".$conn->real_escape_string($problem['special_judge'])."',
+        '".$conn->real_escape_string($problem['description'])."',
+        '".$conn->real_escape_string($problem['input'])."',
+        '".$conn->real_escape_string($problem['output'])."',
+        '".$conn->real_escape_string($problem['sample_input'])."',
+        '".$conn->real_escape_string($problem['sample_output'])."',
+        '".$conn->real_escape_string($problem['hint'])."',
+        '".$conn->real_escape_string($problem['author'])."',
+        '".$conn->real_escape_string($problem['source'])."',
+        '".$conn->real_escape_string(0)."',
+        '".$conn->real_escape_string(0)."',
+        '".$conn->real_escape_string(0)."',
+        '".$conn->real_escape_string(date('Y-m-d H:i:s', time()))."',
+        '".$conn->real_escape_string(date('Y-m-d H:i:s', time()))."'
     )";
     if(!$conn->query($sql)) {
         printf("Errormessage: %s\n", $conn->error);
@@ -207,22 +164,9 @@ function setProblem($problem) {
 }
 
 function resetProblem($problem) {
-    global $conn;
-    $title = $problem['title'];
+    $conn = Conn\ConnectMysqli::getIntance();
     $origin_oj = $problem['origin_oj'];
     $origin_id = $problem['origin_id'];
-    $time = $problem['time'];
-    $memory = $problem['memory'];
-    $special_judge = $problem['special_judge'];
-    $description = $problem['description'];
-    $input = $problem['input'];
-    $output = $problem['output'];
-    $sample_input = $problem['sample_input'];
-    $sample_output = $problem['sample_output'];
-    $hint = $problem['hint'];
-    $author = $problem['author'];
-    $source = $problem['source'];
-    $updated_at = date('Y-m-d H:i:s', time());
     $sql = "select id from problems where origin_oj like '$origin_oj' and origin_id like '$origin_id'";
     $result = $conn->query($sql);
     $row = $result->fetch_array(MYSQLI_ASSOC);
@@ -230,29 +174,23 @@ function resetProblem($problem) {
     if(isset($row)) {
         $id = $row['id'];
         $sql = "update problems set
-                title = '".$conn->real_escape_string($title)."', 
-                time = '".$conn->real_escape_string($time)."', 
-                memory = '".$conn->real_escape_string($memory)."', 
-                special_judge = '".$conn->real_escape_string($special_judge)."', 
-                description = '".$conn->real_escape_string($description)."', 
-                input = '".$conn->real_escape_string($input)."',
-                output = '".$conn->real_escape_string($output)."', 
-                sample_input = '".$conn->real_escape_string($sample_input)."', 
-                sample_output = '".$conn->real_escape_string($sample_output)."', 
-                hint = '".$conn->real_escape_string($hint)."', 
-                author = '".$conn->real_escape_string($author)."', 
-                source = '".$conn->real_escape_string($source)."', 
-                updated_at = '".$conn->real_escape_string($updated_at)."' 
+                title = '".$conn->real_escape_string($problem['title'])."', 
+                time = '".$conn->real_escape_string($problem['time'])."', 
+                memory = '".$conn->real_escape_string($problem['memory'])."', 
+                special_judge = '".$conn->real_escape_string($problem['special_judge'])."', 
+                description = '".$conn->real_escape_string($problem['description'])."', 
+                input = '".$conn->real_escape_string($problem['input'])."',
+                output = '".$conn->real_escape_string($problem['output'])."', 
+                sample_input = '".$conn->real_escape_string($problem['sample_input'])."', 
+                sample_output = '".$conn->real_escape_string($problem['sample_output'])."', 
+                hint = '".$conn->real_escape_string($problem['hint'])."', 
+                author = '".$conn->real_escape_string($problem['author'])."', 
+                source = '".$conn->real_escape_string($problem['source'])."', 
+                updated_at = '".$conn->real_escape_string(date('Y-m-d H:i:s', time()))."' 
                 where id = '".$conn->real_escape_string($id)."'";
         if(!$conn->query($sql)) {
             printf("Errormessage: %s\n", $conn->error);
         }
-    }
-}
-
-function _mkdir() {
-    if(!is_dir("./cookie")) {
-        mkdir("./cookie");
     }
 }
 

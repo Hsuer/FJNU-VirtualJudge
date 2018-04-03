@@ -1,4 +1,7 @@
 <?php
+namespace Judger\Crawler;
+include 'normalize_url.php';
+
 function Crawler($origin_oj, $origin_id) {
     $problem = null;
     switch ($origin_oj) {

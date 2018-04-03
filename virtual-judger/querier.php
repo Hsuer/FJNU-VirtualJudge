@@ -1,4 +1,8 @@
 <?php
+namespace Judger\Querier;
+
+use Judger\Utils;
+
 function Querier($row) {
     $created_at = strtotime($row['created_at']);
     while(true) {
@@ -20,11 +24,11 @@ function Querier($row) {
                 break;
         }
         if(!empty($statusInfo['result'])) {
-            $std_result = checkStatus($row['origin_oj'], $statusInfo['result']);
-            setResult($row, $std_result, $statusInfo['result'], $statusInfo['time'], $statusInfo['memory']);
+            $std_result = Utils\checkStatus($row['origin_oj'], $statusInfo['result']);
+            Utils\setResult($row, $std_result, $statusInfo['result'], $statusInfo['time'], $statusInfo['memory']);
             if($std_result != NULL) {
                 if($statusInfo['ceinfo'] != NULL) {
-                    setCeinfo($row, $statusInfo['ceinfo']);
+                    Utils\setCeinfo($row, $statusInfo['ceinfo']);
                 }
                 break;
             }
@@ -41,15 +45,15 @@ function Querier_HDU($row) {
     $run_id = $row['run_id'];
     $OJ_URL = $OJ['HDU'];
     $url = $OJ_URL.'status.php?first='.$run_id;
-    $data = getContent($url);
+    $data = Utils\getContent($url);
     preg_match ("/<td>(\\d*?)MS<\/td><td>(\\d*?)K<\/td>/", $data, $info);
     preg_match ('/<\/td><td>[\\s\\S]*?<\/td><td>[\\s\\S]*?<\/td><td>([\\s\\S]*?)<\/td><td>[\\s\\S]*?<\/td><td>(\\d*?)MS<\/td><td>(\\d*?)K<\/td>/', $data, $result);
     $statusInfo['time'] = intval($info[1]);
     $statusInfo['memory'] = intval($info[2]);
     $statusInfo['result'] = trim(strip_tags($result[1]));
-    if(checkCE('HDU', $statusInfo['result'])) {
+    if(Utils\checkCE('HDU', $statusInfo['result'])) {
         $url = $OJ_URL.'viewerror.php?rid='.$run_id;
-        $cedata = getContent($url);
+        $cedata = Utils\getContent($url);
         preg_match ("/<pre>([\\s\\S]*?)<\/pre>/", $cedata, $ceinfo);
         $statusInfo['ceinfo'] = trim(strip_tags($ceinfo[0]));
     }
@@ -64,17 +68,16 @@ function Querier_POJ($row) {
     $run_id = $row['run_id'];
     $OJ_URL = $OJ['POJ'];
     $cookie = SCRIPT_ROOT.'POJ_'.$row['account'].'.tmp';
-    getContent($url, $cookie);
     $url = $OJ_URL.'showsource?solution_id='.$run_id;
-    $data = getContent($url, $cookie);
+    $data = Utils\getContent($url, $cookie);
     preg_match ("/<b>Memory:<\/b> (\\d*?)K<\/td><td width=10px><\/td><td><b>Time:<\/b> (\\d*?)MS<\/td><\/tr>/", $data, $info);
     preg_match ('/<font color=.*?>(.*?)<\/font>/', $data, $result);
     $statusInfo['time'] = intval($info[2]);
     $statusInfo['memory'] = intval($info[1]);
     $statusInfo['result'] = $result[1];
-    if(checkCE('POJ', $statusInfo['result'])) {
+    if(Utils\checkCE('POJ', $statusInfo['result'])) {
         $url = $OJ_URL.'showcompileinfo?solution_id='.$run_id;
-        $cedata = getContent($url);
+        $cedata = Utils\getContent($url);
         preg_match ("/<pre>([\\s\\S]*?)<\/pre>/", $cedata, $ceinfo);
         $statusInfo['ceinfo'] = trim(strip_tags($ceinfo[0]));
     }
@@ -91,7 +94,7 @@ function Querier_FZU($row) {
     $OJ_URL = $OJ['FZU'];
     $acc = $row['account'];
     $url = $OJ_URL.'log.php?pid=' . $pid . '&user='. $acc;
-    $data = getContent($url);
+    $data = Utils\getContent($url);
     //Get Time&Memory Limit
     $Pattern =  '/<td>'.$run_id.'<\/td>\\s*'.
                 '<td>.*?<\/td>\\s*'.
@@ -111,9 +114,9 @@ function Querier_FZU($row) {
         $statusInfo['memory'] = substr($info[3],0,-2);
     }
     $statusInfo['result'] = $info[1];
-    if(checkCE('FZU', $statusInfo['result'])) {
+    if(Utils\checkCE('FZU', $statusInfo['result'])) {
         $url = $OJ_URL.'ce.php?sid='.$run_id;
-        $cedata = getContent($url);
+        $cedata = Utils\getContent($url);
         preg_match ('/<font color=\"blue\" size=\"-1\">([\\s\\S]*?)<\/font>/', $cedata, $ceinfo);
         $statusInfo['ceinfo'] = trim(strip_tags($ceinfo[0]));
     }
@@ -129,14 +132,14 @@ function Querier_FJNU($row) {
     $OJ_URL = $OJ['FJNU'];
     $cookie = SCRIPT_ROOT.'FJNU_'.$row['account'].'.tmp';
     $url = $OJ_URL.'showsource.php?id='.$run_id;
-    $data = getContent($url, $cookie);
+    $data = Utils\getContent($url, $cookie);
     if(strstr($data, 'I am sorry')) {
         $url = $OJ_URL.'login.php';
         $login['user_id'] = $row['account'];
         $login['password'] = $row['password'];
-        getContent($url, $cookie, $login, 1);
+        Utils\getContent($url, $cookie, $login, 1);
         $url = $OJ_URL.'showsource.php?id='.$run_id;
-        $data = getContent($url, $cookie);
+        $data = Utils\getContent($url, $cookie);
     }
     //Get Time & Memory Limit
     $Pattern = "/Time:(\\d*?) ms/";
@@ -148,9 +151,9 @@ function Querier_FJNU($row) {
     $statusInfo['time'] = intval($time[1]);
     $statusInfo['memory'] = intval($memory[1]);
     $statusInfo['result'] = $result[1];
-    if(checkCE('FJNU', $statusInfo['result'])) {
+    if(Utils\checkCE('FJNU', $statusInfo['result'])) {
         $url = $OJ_URL.'ceinfo.php?sid='.$run_id;
-        $cedata = getContent($url, $cookie);
+        $cedata = Utils\getContent($url, $cookie);
         preg_match ('/<pre class=\"brush:c;\" id=\'errtxt\' >([\\s\\S]*?)<\/pre>/', $cedata, $ceinfo);
         $statusInfo['ceinfo'] = trim(strip_tags($ceinfo[0]));
     }
