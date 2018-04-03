@@ -1,6 +1,6 @@
 # FJNU-VirtualJudge
 
-![](https://img.shields.io/badge/release-v1.0.1-brightgreen.svg)![](https://img.shields.io/badge/PHP-%3E7.1.0-blue.svg)![](https://img.shields.io/badge/license-GPL-blue.svg)
+![](https://img.shields.io/badge/release-v1.0.1-brightgreen.svg) ![](https://img.shields.io/badge/PHP-%3E7.1.0-blue.svg) ![](https://img.shields.io/badge/license-GPL-blue.svg)
 
 基于 Laravel 与 Swoole 的 ACM-ICPC 远程评测平台，支持HDOJ、POJ、FOJ、FJNUOJ~
 
