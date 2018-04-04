@@ -64,7 +64,7 @@
 
 ### 导入数据表
 
-	mysql> source   ./database/fjnuvj.sql
+	mysql> source ./database/fjnuvj.sql
 
 ## 配置
 
@@ -83,7 +83,7 @@
 
 #### 数据库配置
 
-进入 [config.php](FJNU-VirtualJudge/virtual-judger/config.php) 编辑以下字段
+进入 [config.php](virtual-judger/config.php) 编辑以下字段
 
 	$BASE_PATH = ""; 	//指向Web端资源目录，如 /var/www/html/vjudge/public
 	
@@ -97,7 +97,7 @@
 
 #### 提交账号配置
 
-进入 [account.php](FJNU-VirtualJudge/virtual-judger/account.php) 编辑账号，如下格式：
+进入 [account.php](virtual-judger/account.php) 编辑账号，如下格式：
 
 	$account = array(
 	    'HDU' => 
